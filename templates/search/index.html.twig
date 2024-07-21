@@ -1,0 +1,65 @@
+{# templates/search/index.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Search{% endblock %}
+
+{% block body %}
+    <style>
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+        }
+        .search-form {
+            width: 100%;
+            max-width: 600px; /* Adjust the width as needed */
+        }
+        .search-input {
+            font-size: 1.5em; /* Larger font size */
+        }
+    </style>
+
+    <div class="search-container">
+        <div class="search-form">
+            {{ form_start(form, {'attr': {'class': 'form-inline my-2 my-lg-0'}}) }}
+            <div class="input-group">
+                {{ form_widget(form.search, {'attr': {'class': 'form-control mr-sm-2 search-input', 'placeholder': 'Search...'}}) }}
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <h2>Products</h2>
+    <ul class="list-group">
+        {% for product in products %}
+            <li class="list-group-item">{{ product.name }} - {{ product.description }} - {{ product.price }} - {{ product.stock }}</li>
+        {% else %}
+            <li class="list-group-item">No products found</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Clients</h2>
+    <ul class="list-group">
+        {% for client in clients %}
+            <li class="list-group-item">{{ client.firstname }} {{ client.lastname }} - {{ client.email }}</li>
+        {% else %}
+            <li class="list-group-item">No clients found</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Factures</h2>
+    <ul class="list-group">
+        {% for facture in factures %}
+            <li class="list-group-item">
+                {{ facture.description }} -
+                {{ facture.quantity }} -
+                {{ facture.totalPrice }} -
+                {{ facture.ProductID.name }} -
+                {{ facture.clientID.firstname }} {{ facture.clientID.lastname }}
+            </li>
+        {% else %}
+            <li class="list-group-item">No factures found</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
