@@ -1,10 +1,12 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Facture Details{% endblock %}
+
 {% block body %}
-
+    <h1>Facture</h1>
+    <p>Description: {{ facture.description }}</p>
+    <p>Quantity: {{ facture.quantity }}</p>
+    <p>Total Price: {{ facture.totalPrice }}</p>
+    <p>Product: {{ facture.product.name }}</p>
+    <p>Client: {{ facture.client.firstname }} {{ facture.client.lastname }}</p>
 {% endblock %}
-
-{% block title %}
-
-{% endblock %}
-

@@ -8,13 +8,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SearchType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options):void
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('search', SearchFieldType::class, [
                 'label' => false,
                 'attr' => [
-                    'placeholder' => 'Search...'
+                    'placeholder' => 'Search...',
                 ],
             ]);
     }

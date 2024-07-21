@@ -1,5 +1,3 @@
-{# templates/search/index.html.twig #}
-
 {% extends 'base.html.twig' %}
 
 {% block title %}Search{% endblock %}
@@ -18,48 +16,80 @@
         .search-input {
             font-size: 1.5em; /* Larger font size */
         }
+        .result-section {
+            display: none; /* Hide by default */
+        }
     </style>
 
     <div class="search-container">
         <div class="search-form">
-            {{ form_start(form, {'attr': {'class': 'form-inline my-2 my-lg-0'}}) }}
-            <div class="input-group">
-                {{ form_widget(form.search, {'attr': {'class': 'form-control mr-sm-2 search-input', 'placeholder': 'Search...'}}) }}
-            </div>
-            {{ form_end(form) }}
+            <input type="text" id="search-input" class="form-control mr-sm-2 search-input" placeholder="Search..." />
         </div>
     </div>
 
-    <h2>Products</h2>
-    <ul class="list-group">
-        {% for product in products %}
-            <li class="list-group-item">{{ product.name }} - {{ product.description }} - {{ product.price }} - {{ product.stock }}</li>
-        {% else %}
-            <li class="list-group-item">No products found</li>
-        {% endfor %}
-    </ul>
+    <div id="clients-section" class="result-section">
+        <h2>Clients</h2>
+        <ul class="list-group" id="clients-list"></ul>
+    </div>
 
-    <h2>Clients</h2>
-    <ul class="list-group">
-        {% for client in clients %}
-            <li class="list-group-item">{{ client.firstname }} {{ client.lastname }} - {{ client.email }}</li>
-        {% else %}
-            <li class="list-group-item">No clients found</li>
-        {% endfor %}
-    </ul>
+    <div id="products-section" class="result-section">
+        <h2>Products</h2>
+        <ul class="list-group" id="products-list"></ul>
+    </div>
 
-    <h2>Factures</h2>
-    <ul class="list-group">
-        {% for facture in factures %}
-            <li class="list-group-item">
-                {{ facture.description }} -
-                {{ facture.quantity }} -
-                {{ facture.totalPrice }} -
-                {{ facture.ProductID.name }} -
-                {{ facture.clientID.firstname }} {{ facture.clientID.lastname }}
-            </li>
-        {% else %}
-            <li class="list-group-item">No factures found</li>
-        {% endfor %}
-    </ul>
+    <div id="factures-section" class="result-section">
+        <h2>Factures</h2>
+        <ul class="list-group" id="factures-list"></ul>
+    </div>
+
+    <script>
+        document.getElementById('search-input').addEventListener('input', function() {
+            const searchQuery = this.value;
+
+            if (searchQuery.trim() === '') {
+                clearResults();
+                return;
+            }
+
+            fetch(`/search/ajax?search=${encodeURIComponent(searchQuery)}`, {
+                method: 'GET' // Ensure the method is GET
+            })
+                .then(response => response.json())
+                .then(data => {
+                    updateList('clients-list', 'clients-section', data.clients, ['firstname', 'lastname', 'email']);
+                    updateList('products-list', 'products-section', data.products, ['name', 'description', 'price', 'stock']);
+                    updateList('factures-list', 'factures-section', data.factures, ['description', 'quantity', 'totalPrice', 'productName', 'clientName']);
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        function updateList(listId, sectionId, items, fields) {
+            const list = document.getElementById(listId);
+            const section = document.getElementById(sectionId);
+            list.innerHTML = '';
+
+            if (items.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+
+            section.style.display = 'block';
+            items.forEach(item => {
+                let listItem = '<li class="list-group-item">';
+                fields.forEach(field => {
+                    listItem += `${item[field] || 'N/A'} - `;
+                });
+
+                listItem = listItem.slice(0, -3); // Remove the last ' - '
+                listItem += '</li>';
+                list.innerHTML += listItem;
+            });
+        }
+
+        function clearResults() {
+            updateList('clients-list', 'clients-section', [], ['firstname', 'lastname', 'email']);
+            updateList('products-list', 'products-section', [], ['name', 'description', 'price', 'stock']);
+            updateList('factures-list', 'factures-section', [], ['description', 'quantity', 'totalPrice', 'productName', 'clientName']);
+        }
+    </script>
 {% endblock %}
