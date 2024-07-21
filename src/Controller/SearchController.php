@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class SearchController extends AbstractController
 {
     #[Route('/search', name: 'app_search')]
-    public function index(Request $request, ProductRepository $productRepository, FactureRepository $factureRepository, ClientRepository $clientRepository): Response
+    public function search (Request $request, ProductRepository $productRepository, FactureRepository $factureRepository, ClientRepository $clientRepository): Response
     {
         $form = $this->createForm(SearchType::class);
         $form->handleRequest($request);
