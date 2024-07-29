@@ -9,11 +9,13 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class FactureController extends AbstractController
 {
-    #[Route('/facture/{id}', name: 'app_facture_show')]
+    // FactureController.php
+    #[Route('/factures/{id}', name: 'app_facture_show')]
     public function show(Facture $facture): Response
     {
         return $this->render('facture/show.html.twig', [
             'facture' => $facture,
         ]);
     }
+
 }

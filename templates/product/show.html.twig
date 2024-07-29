@@ -1,12 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Facture Details{% endblock %}
+{% block title %}Product Details{% endblock %}
 
 {% block body %}
-    <h1>Facture</h1>
-    <p>Description: {{ facture.description }}</p>
-    <p>Quantity: {{ facture.quantity }}</p>
-    <p>Total Price: {{ facture.totalPrice }}</p>
-    <p>Product: {{ facture.product.name }}</p>
-    <p>Client: {{ facture.client.firstname }} {{ facture.client.lastname }}</p>
+    <h1>Product</h1>
+    <p>Product: {{ product.name }}</p>
+    <p>Description: {{ product.description }}</p>
+    <p>Price: {{ product.price }}</p>
+    <p>Stock: {{ product.stock }}</p>
 {% endblock %}

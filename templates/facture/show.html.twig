@@ -7,6 +7,6 @@
     <p>Description: {{ facture.description }}</p>
     <p>Quantity: {{ facture.quantity }}</p>
     <p>Total Price: {{ facture.totalPrice }}</p>
-    <p>Product: {{ facture.product.name }}</p>
-    <p>Client: {{ facture.client.firstname }} {{ facture.client.lastname }}</p>
+    <p>Product: {{ facture.productID.name }}</p>
+    <p>Client: {{ facture.clientID.firstname }} {{ facture.clientID.lastname }}</p>
 {% endblock %}
