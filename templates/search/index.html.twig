@@ -13,36 +13,36 @@
 
         .search-form {
             width: 100%;
-            max-width: 800px; /* Adjust the width as needed */
-            position: relative; /* Ensure the dropdown is positioned relative to this container */
+            max-width: 800px;
+            position: relative;
         }
 
         .search-input {
-            width: 100%; /* Full width of the container */
-            font-size: 1.5em; /* Larger font size */
+            width: 100%;
+            font-size: 1.5em;
             padding: 10px;
-            box-sizing: border-box; /* Ensure padding is included in the width */
+            box-sizing: border-box;
         }
 
         .suggestions-dropdown {
             position: absolute;
-            top: 100%; /* Position directly below the search input */
+            top: 100%;
             left: 0;
-            width: 100%; /* Match the width of the input */
+            width: 100%;
             border: 1px solid #ccc;
             background-color: #fff;
             z-index: 1000;
-            display: none; /* Hidden by default */
+            display: block;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-height: 300px; /* Limit height and add scroll if needed */
-            overflow-y: auto; /* Add vertical scroll if suggestions exceed height */
-            box-sizing: border-box; /* Ensure padding is included in the width */
+            max-height: 300px;
+            overflow-y: auto;
+            box-sizing: border-box;
         }
 
         .suggestion-section-label {
             padding: 10px;
             font-weight: bold;
-            background-color: #e0e0e0; /* Darker background color */
+            background-color: #e0e0e0;
             border-bottom: 1px solid #ddd;
         }
 
@@ -57,86 +57,51 @@
     </style>
 
     <div class="search-container">
-        <div class="search-form">
-            <input type="text" id="search-input" class="search-input" placeholder="Search..." autocomplete="off" />
-            <div id="suggestions-container" class="suggestions-dropdown"></div>
-        </div>
+        <form class="search-form" id="search-form" action="{{ path('app_search') }}" method="post">
+            {{ form_start(form) }}
+            {{ form_widget(form.search, {'attr': {'class': 'search-input', 'id': 'search-input', 'placeholder': 'Search...'}}) }}
+            {{ form_end(form) }}
+            <div id="suggestions-container" class="suggestions-dropdown">
+                {% if form.vars.submitted and (clients or products or factures) %}
+                    {% if clients %}
+                        <div class="suggestion-section-label">Clients</div>
+                        {% for client in clients %}
+                            <div class="suggestion-item" data-id="{{ client.id }}" data-type="client">{{ client.firstname }} {{ client.lastname }} ({{ client.email }})</div>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if products %}
+                        <div class="suggestion-section-label">Products</div>
+                        {% for product in products %}
+                            <div class="suggestion-item" data-id="{{ product.id }}" data-type="product">{{ product.name }} ({{ product.description }})</div>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if factures %}
+                        <div class="suggestion-section-label">Factures</div>
+                        {% for facture in factures %}
+                            <div class="suggestion-item" data-id="{{ facture.id }}" data-type="facture">{{ facture.description }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% elseif form.vars.submitted %}
+                    <div class="suggestion-item">No results found.</div>
+                {% endif %}
+            </div>
+        </form>
     </div>
 
     <script>
-        document.getElementById('search-input').addEventListener('input', function() {
-            const searchQuery = this.value;
+        document.querySelectorAll('.suggestion-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const type = this.getAttribute('data-type');
 
-            if (searchQuery.trim() === '') {
-                clearSuggestions();
-                return;
-            }
-
-            fetch(`/search/ajax?search=${encodeURIComponent(searchQuery)}`, {
-                method: 'GET' // Ensure the method is GET
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Data:', data); // Log data to ensure ids are present
-                    const groupedResults = {
-                        clients: data.clients.map(client => ({
-                            type: 'client',
-                            label: `${client.firstname} ${client.lastname} (${client.email})`,
-                            id: client.id // Ensure this id is being set correctly
-                        })),
-                        products: data.products.map(product => ({
-                            type: 'product',
-                            label: `${product.name} (${product.description})`,
-                            id: product.id // Ensure this id is being set correctly
-                        })),
-                        factures: data.factures.map(facture => ({
-                            type: 'facture',
-                            label: `${facture.description} - ${facture.clientName}`,
-                            id: facture.id // Ensure this id is being set correctly
-                        }))
-                    };
-                    updateSuggestions(groupedResults);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    clearSuggestions(); // Optionally clear suggestions on error
-                });
+                handleSuggestionClick({ id, type });
+            });
         });
 
-        function updateSuggestions(groupedResults) {
-            const suggestionsContainer = document.getElementById('suggestions-container');
-            suggestionsContainer.innerHTML = '';
-
-            const types = ['clients', 'products', 'factures'];
-
-            let hasResults = false;
-
-            types.forEach(type => {
-                const items = groupedResults[type];
-                if (items.length > 0) {
-                    hasResults = true;
-                    const sectionLabel = document.createElement('div');
-                    sectionLabel.classList.add('suggestion-section-label');
-                    sectionLabel.textContent = type.charAt(0).toUpperCase() + type.slice(1);
-                    suggestionsContainer.appendChild(sectionLabel);
-
-                    items.forEach(suggestion => {
-                        const suggestionItem = document.createElement('div');
-                        suggestionItem.classList.add('suggestion-item');
-                        suggestionItem.textContent = suggestion.label;
-                        suggestionItem.addEventListener('click', () => {
-                            handleSuggestionClick(suggestion);
-                        });
-                        suggestionsContainer.appendChild(suggestionItem);
-                    });
-                }
-            });
-
-            suggestionsContainer.style.display = hasResults ? 'block' : 'none';
-        }
-
         function handleSuggestionClick(suggestion) {
-            console.log('Suggestion Clicked:', suggestion); // Log suggestion to check id
+            console.log('Suggestion Clicked:', suggestion); //for the id
 
             let url = '';
 
@@ -153,16 +118,9 @@
             }
 
             if (url) {
-                window.location.href = url; // Redirect to the new URL
+                window.location.href = url;
             }
-
-            clearSuggestions();
-        }
-
-        function clearSuggestions() {
-            const suggestionsContainer = document.getElementById('suggestions-container');
-            suggestionsContainer.innerHTML = '';
-            suggestionsContainer.style.display = 'none';
         }
     </script>
+
 {% endblock %}
