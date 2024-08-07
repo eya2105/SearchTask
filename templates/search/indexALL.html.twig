@@ -57,29 +57,29 @@
     </style>
 
     <div class="search-container">
-        <form class="search-form" id="search-form" action="{{ path('app_search') }}" method="post">
+        <form class="search-form" id="search-form" action="{{ path('app_search_all') }}" method="post">
             {{ form_start(form) }}
             {{ form_widget(form.search, {'attr': {'class': 'search-input', 'id': 'search-input', 'placeholder': 'Search...'}}) }}
             {{ form_end(form) }}
             <div id="suggestions-container" class="suggestions-dropdown">
-                {% if form.vars.submitted and (clients or products or factures) %}
-                    {% if clients %}
+                {% if form.vars.submitted and results %}
+                    {% if results.client is not empty %}
                         <div class="suggestion-section-label">Clients</div>
-                        {% for client in clients %}
+                        {% for client in results.client %}
                             <div class="suggestion-item" data-id="{{ client.id }}" data-type="client">{{ client.firstname }} {{ client.lastname }} ({{ client.email }})</div>
                         {% endfor %}
                     {% endif %}
 
-                    {% if products %}
+                    {% if results.product is not empty %}
                         <div class="suggestion-section-label">Products</div>
-                        {% for product in products %}
+                        {% for product in results.product %}
                             <div class="suggestion-item" data-id="{{ product.id }}" data-type="product">{{ product.name }} ({{ product.description }})</div>
                         {% endfor %}
                     {% endif %}
 
-                    {% if factures %}
+                    {% if results.facture is not empty %}
                         <div class="suggestion-section-label">Factures</div>
-                        {% for facture in factures %}
+                        {% for facture in results.facture %}
                             <div class="suggestion-item" data-id="{{ facture.id }}" data-type="facture">{{ facture.description }}</div>
                         {% endfor %}
                     {% endif %}
@@ -122,5 +122,4 @@
             }
         }
     </script>
-
 {% endblock %}

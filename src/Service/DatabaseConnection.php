@@ -1,6 +1,5 @@
 <?php
 
-// src/Service/DatabaseConnection.php
 namespace App\Service;
 
 use PDO;
@@ -9,10 +8,9 @@ use App\Exception\AccessDeniedException;
 
 class DatabaseConnection
 {
-    private $host;
-    private $user;
-    private $password;
-
+    private string $host;
+    private string $user;
+    private string $password;
     public function __construct()
     {
         $this->host = $_ENV['DATABASE_HOST'];
