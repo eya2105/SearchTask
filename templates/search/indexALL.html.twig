@@ -66,22 +66,26 @@
                     {% if results.client is not empty %}
                         <div class="suggestion-section-label">Clients</div>
                         {% for client in results.client %}
-                            <div class="suggestion-item" data-id="{{ client.id }}" data-type="client">{{ client.firstname }} {{ client.lastname }} ({{ client.email }})</div>
-                        {% endfor %}
+                            <div class="suggestion-item" data-id="{{ client.id }}" data-type="client">
+                                ID: {{ client.id }}, Name: {{ client.firstname }} {{ client.lastname }}, Email: {{ client.email }}
+                            </div>                        {% endfor %}
                     {% endif %}
 
                     {% if results.product is not empty %}
                         <div class="suggestion-section-label">Products</div>
                         {% for product in results.product %}
-                            <div class="suggestion-item" data-id="{{ product.id }}" data-type="product">{{ product.name }} ({{ product.description }})</div>
-                        {% endfor %}
+                            <div class="suggestion-item" data-id="{{ product.id }}" data-type="product">
+                                ID: {{ product.id }}, Name: {{ product.name }}, Description: {{ product.description }},
+                                Price: {{ product.price }}, Stock: {{ product.stock }}
+                            </div>                        {% endfor %}
                     {% endif %}
 
                     {% if results.facture is not empty %}
                         <div class="suggestion-section-label">Factures</div>
                         {% for facture in results.facture %}
-                            <div class="suggestion-item" data-id="{{ facture.id }}" data-type="facture">{{ facture.description }}</div>
-                        {% endfor %}
+                            <div class="suggestion-item" data-id="{{ facture.id }}" data-type="facture">
+                                ID: {{ facture.id }}, Description: {{ facture.description }}
+                            </div>                        {% endfor %}
                     {% endif %}
                 {% elseif form.vars.submitted %}
                     <div class="suggestion-item">No results found.</div>
